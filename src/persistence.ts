@@ -3,7 +3,16 @@ import dotenv = require("dotenv");
 import fs from "fs";
 import path = require("path");
 import log from "./log";
-dotenv.config();
+
+if (!fs.existsSync(".env")) {
+    log.error("app", "Unable to read the file '.env'. Did you remember to copy the sample.env file?");
+    process.exit(-1);
+}
+
+const parsed_config = dotenv.config();
+if (parsed_config.error) {
+    throw parsed_config.error;
+}
 
 if (!fs.existsSync(process.env.PERSISTENCE_DATA_PATH || "")) {
     fs.mkdirSync(process.env.PERSISTENCE_DATA_PATH || "", { recursive: true });
